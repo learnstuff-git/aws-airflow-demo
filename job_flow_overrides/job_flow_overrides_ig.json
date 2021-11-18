@@ -1,0 +1,120 @@
+{
+  "Name": "Data-Pipeline-<sourcename>",
+  "ReleaseLabel": "emr-5.33.0",
+  "LogUri": "s3://{}/logs/emr/".format(S3_BUCKET_NAME),
+  "Instances": {
+    "Ec2SubnetId": "subnet-0cad43635714cb202",
+    "InstanceGroups": [
+      {
+        "Name": "Master Instance",
+        "Market": "ON_DEMAND",
+        "InstanceRole": "MASTER",
+        "InstanceType": "m6g.xlarge",
+        "InstanceCount": 1,
+        "EbsConfiguration": {
+          "EbsBlockDeviceConfigs": [
+            {
+              "VolumeSpecification": {
+                "VolumeType": "gp2",
+                "SizeInGB": 32
+              },
+              "VolumesPerInstance": 1
+            }
+          ],
+          "EbsOptimized": true
+        }
+      },
+      {
+        "Name": "Core Instance",
+        "Market": "ON_DEMAND",
+        "InstanceRole": "CORE",
+        "InstanceType": "m6g.xlarge",
+        "InstanceCount": 1,
+        "EbsConfiguration": {
+          "EbsBlockDeviceConfigs": [
+            {
+              "VolumeSpecification": {
+                "VolumeType": "gp2",
+                "SizeInGB": 32
+              },
+              "VolumesPerInstance": 1
+            }
+          ],
+          "EbsOptimized": true
+        }
+      },
+      {
+        "Name": "Task Instance",
+        "Market": "SPOT",
+        "InstanceRole": "TASK",
+        "InstanceType": "m6g.xlarge",
+        "InstanceCount": 1,
+        "EbsConfiguration": {
+          "EbsBlockDeviceConfigs": [
+            {
+              "VolumeSpecification": {
+                "VolumeType": "gp2",
+                "SizeInGB": 32
+              },
+              "VolumesPerInstance": 1
+            }
+          ],
+          "EbsOptimized": true
+        }
+      }
+    ],
+    "TerminationProtected": false,
+    "KeepJobFlowAliveWhenNoSteps": true
+  },
+  "Configurations": [
+    {
+      "Classification": "hive-site",
+      "Properties": {
+        "hive.metastore.glue.catalogid": "174468349935",
+        "hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
+      }
+    },
+    {
+      "Classification": "spark-hive-site",
+      "Properties": {
+        "hive.metastore.glue.catalogid": "174468349935",
+        "hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+        "spark.sql.catalogImplementation": "hive"
+      }
+    }
+  ],
+  "Applications": [
+    {
+      "Name": "Spark"
+    }
+  ],
+  "VisibleToAllUsers": true,
+  "JobFlowRole": "EMR_EC2_DefaultRole",
+  "ServiceRole": "EMR_DefaultRole",
+  "AutoScalingRole": "EMR_AutoScaling_DefaultRole",
+  "ManagedScalingPolicy": {
+    "ComputeLimits": {
+      "MinimumCapacityUnits": 1,
+      "MaximumOnDemandCapacityUnits": 3,
+      "MaximumCapacityUnits": 10,
+      "MaximumCoreCapacityUnits": 3,
+      "UnitType": "Instances"
+    }
+  },
+  "EbsRootVolumeSize": 10,
+  "StepConcurrencyLevel": 2,
+  "Tags": [
+    {
+      "Key": "Service",
+      "Value": "LF"
+    },
+    {
+      "Key": "Name",
+      "Value": "Airflow-EMR-DE"
+    },
+    {
+      "Key": "Owner",
+      "Value": "Data Engineering Team"
+    }
+  ]
+}

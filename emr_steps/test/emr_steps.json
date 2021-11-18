@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "setup - copy files",
+    "ActionOnFailure": "CANCEL_AND_WAIT",
+    "HadoopJarStep": {
+      "Jar": "command-runner.jar",
+      "Args": [
+        "aws",
+        "s3",
+        "cp",
+        "--recursive",
+        S3_URI,
+        "/home/hadoop/"
+      ]
+    }
+  },
+  {
+    "Name": "Run Spark",
+    "ActionOnFailure": "CANCEL_AND_WAIT",
+    "HadoopJarStep": {
+      "Jar": "command-runner.jar",
+      "Args": [
+        "spark-submit",
+        "/home/hadoop/testagg.py",
+        "s3://{}/raw".format(S3_BUCKET_NAME),
+        "s3://{}/target".format(S3_BUCKET_NAME)
+      ]
+    }
+  }
+]
